@@ -8,7 +8,7 @@ const DB_QUERYSTRING = process.env.DB_QUERYSTRING
 module.exports = {
 	development: {
 		client: "mongodb",
-		connection: `mongodb://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOSTNAME}/${DB_NAME}?${DB_QUERYSTRING}`,
+		connection: `mongodb+srv://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOSTNAME}/${DB_NAME}?${DB_QUERYSTRING}`,
 		collections: {
 			users: {
 				name: "users",

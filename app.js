@@ -32,7 +32,7 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(async (id, done) => {
 	try {
 		let usersModel = await getUsersModel()
-		let user = await usersModel.find({_id:id})
+		let user = await usersModel.findOne({id})
 		if (user) done(null, user)
 		else done(null, false)
 	}
@@ -62,12 +62,12 @@ passport.use(new GoogleStrategy({
 	try {
 		/// TODO - ugly. change to findOrCreate and consider new format for user records or separate collections
 		const usersModel = await getUsersModel()
-		let user = await usersModel.findOne({ googleId: profile.id })
+		let user = await usersModel.findOne({ id: profile.id })
 		if (user) { 
 			return done(null, user)}
-		user = await usersModel.insertGoogleUser(profile)
-		if (user) { 
-			return done(null, user)}
+		let result = await usersModel.insertGoogleUser(profile)
+		if (result.insertedCount==1) { 
+			return done(null, profile)}
 		return done(true, false)
 	}
 	catch (err) {
@@ -116,7 +116,7 @@ app.get('/auth/google', passport.authenticate('google', { scope: [
        'https://www.googleapis.com/auth/plus.login',
 	   'https://www.googleapis.com/auth/plus.profile.emails.read',
 	   'https://www.googleapis.com/auth/userinfo.profile'] 
-}));
+}))
 
 // GET /auth/google/callback
 //   Use passport.authenticate() as route middleware to authenticate the
@@ -127,12 +127,12 @@ app.get( '/auth/google/callback',
     	passport.authenticate( 'google', { 
     		successRedirect: '/',
     		failureRedirect: '/login'
-}));
+}))
 
 app.get('/logout', function(req, res){
-  req.logout();
-  res.redirect('/');
-});
+  req.logout()
+  res.redirect('/')
+})
 
 server.listen( 4000 );
 
