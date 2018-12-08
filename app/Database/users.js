@@ -14,7 +14,6 @@ class UsersModel {
 
 	async findAll() {
 		const docs = await this.collection.find().toArray()
-		console.log(docs)
 		return docs
 	}
 
@@ -22,7 +21,7 @@ class UsersModel {
 		if (opts._id) opts._id = ObjectId(opts._id)
 		const user = await this.collection.findOne(opts)
 		if (user) {
-			console.log(`findOne found: ${JSON.stringify(user)}`)
+			console.log(`findOne found user ${user.name.givenName} ${user.name.familyName}`)
 			return user
 		}
 		return
