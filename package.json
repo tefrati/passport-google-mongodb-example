@@ -4,10 +4,32 @@
   "main": "app.js",
   "author": "Tzahi Efrati <tzahi.efrati@gmail.com>",
   "license": "MIT",
+  "engines": {
+    "yarn": "1.12.3"
+  },
+  "scripts": {
+    "start": "node app.js",
+    "debug": "nodemon --inspect app.js",
+    "test": "mocha --recursive"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "test/*",
+      "docs/*"
+    ],
+    "delay": "2500"
+  },
   "dependencies": {
+    "body-parser": "^1.18.3",
+    "connect-redis": "^3.4.0",
+    "cookie-parser": "^1.4.3",
+    "dotenv": "^6.2.0",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
+    "express-session": "^1.15.6",
+    "http": "^0.0.0",
     "passport": "^0.4.0",
-    "passport-google-oauth2": "^0.1.6"
+    "passport-google-oauth2": "^0.1.6",
+    "util": "^0.11.1"
   }
 }
