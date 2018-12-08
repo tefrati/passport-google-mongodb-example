@@ -1,0 +1,13 @@
+{
+  "name": "passport-google",
+  "version": "1.0.0",
+  "main": "app.js",
+  "author": "Tzahi Efrati <tzahi.efrati@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "passport": "^0.4.0",
+    "passport-google-oauth2": "^0.1.6"
+  }
+}
