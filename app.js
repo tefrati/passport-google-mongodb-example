@@ -8,7 +8,9 @@ var express          = require( 'express' )
   , bodyParser       = require( 'body-parser' )
   , cookieParser     = require( 'cookie-parser' )
   , session          = require( 'express-session' )
-  , GoogleStrategy   = require( 'passport-google-oauth2' ).Strategy;
+  , GoogleStrategy   = require( 'passport-google-oauth2' ).Strategy
+
+  const {getUsersModel} = require("./app/Database/users")
 
 // API Access link for creating client ID and secret:
 // https://code.google.com/apis/console/
@@ -27,10 +29,16 @@ passport.serializeUser(function(user, done) {
 });
 
 // used to deserialize the user
-passport.deserializeUser(function(id, done) {
-	//User.findById(id, function(err, user) {
-		done(err, user);
-	//});
+passport.deserializeUser(async (id, done) => {
+	try {
+		let usersModel = await getUsersModel()
+		let user = await usersModel.find({_id:id})
+		if (user) done(null, user)
+		else done(null, false)
+	}
+	catch (err) {
+		done(err, null)
+	}
 });
 
 
@@ -50,10 +58,21 @@ passport.use(new GoogleStrategy({
     callbackURL: `${process.env.WEB_ORIGIN}/auth/google/callback`,
     passReqToCallback   : true
   },
-  function(request, accessToken, refreshToken, profile, done) {
-    //User.findOrCreate({ googleId: profile.id }, function (err, user) {
-		 return done(null, user);
-	//  });
+  async function(request, accessToken, refreshToken, profile, done) {
+	try {
+		/// TODO - ugly. change to findOrCreate and consider new format for user records or separate collections
+		const usersModel = await getUsersModel()
+		let user = await usersModel.findOne({ googleId: profile.id })
+		if (user) { 
+			return done(null, user)}
+		user = await usersModel.insertGoogleUser(profile)
+		if (user) { 
+			return done(null, user)}
+		return done(true, false)
+	}
+	catch (err) {
+		return done(err, false)
+	}
   }
 ));
 
@@ -115,7 +134,7 @@ app.get('/logout', function(req, res){
   res.redirect('/');
 });
 
-server.listen( 3000 );
+server.listen( 4000 );
 
 
 // Simple route middleware to ensure user is authenticated.
