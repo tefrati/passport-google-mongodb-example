@@ -1,5 +1,5 @@
 "use strict"
-const {MongoClient, ObjectId} = require("mongodb")
+const {MongoClient} = require("mongodb")
 
 const config = require("../../config/db")[process.env.NODE_ENV]
 let client, db, collections = {}

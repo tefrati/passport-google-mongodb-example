@@ -1,7 +1,8 @@
 "use strict"
 let usersModel
 
-const {getCollection, ObjectId}  = require("./mongodb")
+const {ObjectId} = require("mongodb")
+const {getCollection}  = require("./mongodb")
 
 class User {
 
