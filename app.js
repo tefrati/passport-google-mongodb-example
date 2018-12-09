@@ -14,7 +14,7 @@ var express          = require( "express" )
 
 const port = process.env.PORT || 4000
 
-const {getUsersModel} = require("./app/Database/users")
+var {User} = require("./app/Database/users")
 
 // API Access link for creating client ID and secret:
 // https://code.google.com/apis/console/
@@ -34,8 +34,7 @@ passport.serializeUser(function(user, done) {
 // used to deserialize the user
 passport.deserializeUser(async (id, done) => {
 	try {
-		let usersModel = await getUsersModel()
-		let user = await usersModel.findOne({id})
+		let user = await User.findOne({id})
 		if (user) done(null, user)
 		else done(null, false)
 	}
@@ -62,11 +61,10 @@ passport.use(new GoogleStrategy({
 async function(request, accessToken, refreshToken, profile, done) {
 	try {
 		/// TODO - ugly. change to findOrCreate and consider new format for user records or separate collections
-		const usersModel = await getUsersModel()
-		let user = await usersModel.findOne({ id: profile.id })
+		let user = await User.findOne({ id: profile.id })
 		if (user) { 
 			return done(null, user)}
-		let result = await usersModel.insertGoogleUser(profile)
+		let result = await User.insertGoogleUser(profile)
 		if (result.insertedCount==1) { 
 			return done(null, profile)}
 		return done(true, false)
