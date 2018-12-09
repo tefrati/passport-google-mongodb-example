@@ -1,5 +1,6 @@
 "use script"
 require("dotenv").config()
+const indexRouter = require("./app/routes/index")
 
 var express          = require( "express" )
 	, app              = express()
@@ -8,6 +9,8 @@ var express          = require( "express" )
 	, cookieParser     = require( "cookie-parser" )
 	, session          = require( "express-session" )
 	, GoogleStrategy   = require( "passport-google-oauth2" ).Strategy
+	, morgan 		   = require("morgan")
+
 
 const port = process.env.PORT || 4000
 
@@ -40,7 +43,6 @@ passport.deserializeUser(async (id, done) => {
 		done(err, null)
 	}
 })
-
 
 // Use the GoogleStrategy within Passport.
 //   Strategies in Passport require a `verify` function, which accept
@@ -79,6 +81,7 @@ async function(request, accessToken, refreshToken, profile, done) {
 app.set("views", __dirname + "/app/views")
 app.set("view engine", "ejs")
 app.use( express.static(__dirname + "/public"))
+app.use(morgan("combined"))
 app.use( cookieParser()) 
 app.use( bodyParser.json())
 app.use( bodyParser.urlencoded({
@@ -94,54 +97,8 @@ app.use( session({
 app.use( passport.initialize())
 app.use( passport.session())
 
-app.get("/", function(req, res){
-	res.render("index", { user: req.user })
-})
+// Mount routes
+app.use("/", indexRouter)
 
-app.get("/account", ensureAuthenticated, function(req, res){
-	res.render("account", { user: req.user })
-})
-
-app.get("/login", function(req, res){
-	res.render("login", { user: req.user })
-})
-
-// GET /auth/google
-//   Use passport.authenticate() as route middleware to authenticate the
-//   request.  The first step in Google authentication will involve
-//   redirecting the user to google.com.  After authorization, Google
-//   will redirect the user back to this application at /auth/google/callback
-app.get("/auth/google", passport.authenticate("google", { scope: [
-	"https://www.googleapis.com/auth/plus.login",
-	"https://www.googleapis.com/auth/plus.profile.emails.read",
-	"https://www.googleapis.com/auth/userinfo.profile"] 
-}))
-
-// GET /auth/google/callback
-//   Use passport.authenticate() as route middleware to authenticate the
-//   request.  If authentication fails, the user will be redirected back to the
-//   login page.  Otherwise, the primary route function function will be called,
-//   which, in this example, will redirect the user to the home page.
-app.get( "/auth/google/callback", 
-	passport.authenticate( "google", { 
-		successRedirect: "/",
-		failureRedirect: "/login"
-	}))
-
-app.get("/logout", function(req, res){
-	req.logout()
-	res.redirect("/")
-})
-
-// Have the app listen on a default port or 3000
+// Have the app listen on a default port or 4000
 app.listen(port, () => console.log(`app is waiting on port ${port}`)) 
-
-// Simple route middleware to ensure user is authenticated.
-//   Use this route middleware on any resource that needs to be protected.  If
-//   the request is authenticated (typically via a persistent login session),
-//   the request will proceed.  Otherwise, the user will be redirected to the
-//   login page.
-function ensureAuthenticated(req, res, next) {
-	if (req.isAuthenticated()) { return next() }
-	res.redirect("/login")
-}
