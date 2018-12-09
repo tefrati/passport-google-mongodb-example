@@ -61,30 +61,6 @@ module.exports = {
 					}
 				}
 			},
-			parkings: {
-				name: "parkings",
-				options: {
-					validationLevel: "strict",
-					validator: {
-						$jsonSchema: {
-							bsonType: "object",
-							required: ["address", "ttl"],
-							additionalProperties: false,
-							properties: {
-								_id: {
-									bsonType: "objectId",
-								},
-								address: {
-									bsonType: "string", 
-								},
-								ttl: {
-									bsonType: "int",
-								}
-							}
-						}
-					}
-				}
-			}
 		},
 		migrations: {},
 		seeds: {}
