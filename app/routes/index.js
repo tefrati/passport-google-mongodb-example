@@ -14,6 +14,13 @@ const googleCallback = passport.authenticate( "google", {
 	failureRedirect: "/login"
 })
 
+const automaticAuth =  passport.authenticate("automatic")
+
+const automaticCallback = passport.authenticate("automatic", { 
+	successRedirect: "/",
+	failureRedirect: "/login" 
+})
+	
 const routes = {
 	index: (req, res) => {
 		res.render("index", { user: req.user })
@@ -41,6 +48,12 @@ const routes = {
 	{
 		googleCallback(req, res, next)
 	},
+	automaticAuth: (req, res, next) => {
+		automaticAuth(req, res, next)
+	},
+	automaticCallback: (req, res, next) => {
+		automaticCallback(req, res, next)
+	},
 	logout: (req, res) => {
 		req.logout()
 		res.redirect("/")
@@ -53,6 +66,8 @@ router
 	.get("/login", routes.login)
 	.get("/auth/google", routes.googleAuth)
 	.get("/auth/google/callback", routes.googleCallback)
+	.get("/auth/automatic", routes.automaticAuth)
+	.get("/redirect", routes.automaticCallback)
 	.get("/logout", routes.logout)
 
 // Simple route middleware to ensure user is authenticated.
