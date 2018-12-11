@@ -61,6 +61,9 @@ module.exports = {
 					}
 				}
 			},
+			carLocations: {
+				name: "car_locations"
+			}
 		},
 		migrations: {},
 		seeds: {}
