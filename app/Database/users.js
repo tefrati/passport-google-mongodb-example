@@ -1,16 +1,15 @@
 "use strict"
-let usersModel
 
 const {ObjectId} = require("mongodb")
 const {getCollection}  = require("./mongodb")
 
 class User {
 
-	static async insertGoogleUser(googleUser) {
+	static async inserUserProfile(user) {
 		let collection = getCollection("users")
-		return await this.collection.insertOne({...googleUser})
+		return await collection.insertOne({...user})
 	}
-
+	
 	static async findAll() {
 		let collection = getCollection("users")
 		const docs = await collection.find().toArray()
@@ -22,7 +21,7 @@ class User {
 		let collection = getCollection("users")
 		const user = await collection.findOne(opts)
 		if (user) {
-			console.log(`findOne found user ${user.name.givenName} ${user.name.familyName}`)
+			console.log(`findOne found user ${user.profile.displayName}`)
 			return user
 		}
 		return
