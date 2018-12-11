@@ -1,7 +1,9 @@
 const passport         = require( "passport" )
 const GoogleStrategy   = require( "passport-google-oauth2" ).Strategy
 const AutomaticStrategy = require("passport-automatic").Strategy
-var {User} = require("./Database/users")
+const {User} = require("./Database/users")
+const {Location} = require("./Database/locations")
+const {getCurrentParkingLocation} = require("./integrations/automatic")
 
 // API Access link for creating client ID and secret:
 // https://code.google.com/apis/console/
@@ -48,7 +50,6 @@ passport.use(new GoogleStrategy(
 	},
 	async function(request, accessToken, refreshToken, profile, done) {
 		try {
-			/// TODO - ugly. change to findOrCreate and consider new format for user records or separate collections
 			let user = await User.findOne({ "profile.id": profile.id })
 			if (user) { return done(null, profile)}
 			let result = await User.inserUserProfile({source: "Google", profile})
@@ -69,10 +70,13 @@ passport.use(new AutomaticStrategy(
 	},
 	async (accessToken, refreshToken, profile, done) => {
 		try {
-			/// TODO - ugly. change to findOrCreate and consider new format for user records or separate collections
 			let user = await User.findOne({"profile.id": profile.id})
 			if (user) { return done(null, profile)}
 			profile.displayName = `${profile.first_name} ${profile.last_name}`
+			profile.accessToken = accessToken
+			profile.refreshToken = refreshToken
+			let location = await getCurrentParkingLocation(accessToken)
+			await Location.insertLocation(profile.id, location)
 			profile.source = "Automatic"
 			let result = await User.inserUserProfile({source: "Automatic", profile})
 			if (result.insertedCount==1) { return done(null, profile)}
