@@ -1,5 +1,6 @@
 <% if (!user) { %>
-	<h2>Welcome! Please <a href="/auth/google">log in</a>.</h2>
+	<h2>Welcome! Please <a href="/auth/google">log in with Google</a>.</h2>
+	<h2>Or, <a href="/auth/automatic">login with Automatic</a></h2>
 <% } else { %>
-	<h2>Hello, <%= user.displayName %>.</h2>
+	<h2>Hello, <%= user.profile.displayName %>.</h2>
 <% } %>
