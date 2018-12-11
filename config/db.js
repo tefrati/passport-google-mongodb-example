@@ -19,20 +19,20 @@ module.exports = {
 							bsonType: "object",
 							//required: ["username", "password"],
 							//additionalProperties: false,
-							properties: {
-								_id: {
-									bsonType: "objectId",
-								},
-								username: {
-									bsonType: "string", 
-								},
-								password: {
-									bsonType: "string",
-								},
-								automaticId: {
-									bsonType: "string", 
-								}
-							}
+							// properties: {
+							// 	_id: {
+							// 		bsonType: "objectId",
+							// 	},
+							// 	username: {
+							// 		bsonType: "string", 
+							// 	},
+							// 	password: {
+							// 		bsonType: "string",
+							// 	},
+							// 	automaticId: {
+							// 		bsonType: "string", 
+							// 	}
+							// }
 						}
 					}
 				}
