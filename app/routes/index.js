@@ -2,6 +2,7 @@
 var express = require("express")
 const passport = require("passport")
 var router = express.Router()
+const {tripFinishedEvent} = require("../integrations/automatic")
 
 const googleAuth = passport.authenticate("google", { scope: [
 	"https://www.googleapis.com/auth/plus.login",
@@ -54,6 +55,11 @@ const routes = {
 	automaticCallback: (req, res, next) => {
 		automaticCallback(req, res, next)
 	},
+	automaticWebhook: (req, res) => {
+		console.log("automaticWebhook called")
+		tripFinishedEvent(req.body)
+		res.status(200)
+	},
 	logout: (req, res) => {
 		req.logout()
 		res.redirect("/")
@@ -68,6 +74,7 @@ router
 	.get("/auth/google/callback", routes.googleCallback)
 	.get("/auth/automatic", routes.automaticAuth)
 	.get("/redirect", routes.automaticCallback)
+	.post("/automatic/webhook", routes.automaticWebhook)
 	.get("/logout", routes.logout)
 
 // Simple route middleware to ensure user is authenticated.
